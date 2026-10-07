@@ -1,0 +1,44 @@
+services:
+  patient-service:
+    build: ./patient-service
+    container_name: patient-service
+    ports:
+      - "8001:8001"
+    networks:
+      - hospital-network
+
+  doctor-service:
+    build: ./doctor-service
+    container_name: doctor-service
+    ports:
+      - "8002:8002"
+    networks:
+      - hospital-network
+
+  billing-service:
+    build: ./billing-service
+    container_name: billing-service
+    ports:
+      - "8003:8003"
+    networks:
+      - hospital-network
+
+  appointment-service:
+    build: ./appointment-service
+    container_name: appointment-service
+    ports:
+      - "8000:8000"
+    environment:
+      - PATIENT_SERVICE_URL=http://patient-service:8001
+      - DOCTOR_SERVICE_URL=http://doctor-service:8002
+      - BILLING_SERVICE_URL=http://billing-service:8003
+    depends_on:
+      - patient-service
+      - doctor-service
+      - billing-service
+    networks:
+      - hospital-network
+
+networks:
+  hospital-network:
+    driver: bridge
